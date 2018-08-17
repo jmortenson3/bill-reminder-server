@@ -6,6 +6,8 @@ const port = 3001;
 const billRoutes = require('./routes/bills');
 
 app.use(cors());
+app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded());
 
 app.use('/api/b', billRoutes);
