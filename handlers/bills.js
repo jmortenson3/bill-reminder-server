@@ -13,7 +13,9 @@ exports.createBill = async function(req, res, next) {
       paid: req.body.paid,
       amount: req.body.amount,
       payAtUrl: req.body.payAtUrl,
-      dueDate: req.body.dueDate
+      dueEvery: req.body.dueEvery,
+      dueOn: req.body.dueOn,
+      firstDueDate: req.body.firstDueDate
     });
     console.log(`Created game with id ${bill.id}.`);
     return res.status(200).json(bill);
@@ -70,11 +72,17 @@ exports.updateBill = async function(req, res, next) {
       if (req.body.paid) {
         updateQuery.paid = req.body.paid;
       }
-      if (req.body.dueDate) {
-        updateQuery.dueDate = req.body.dueDate;
+      if (req.body.dueEvery) {
+        updateQuery.dueEvery = req.body.dueEvery;
+      }
+      if (req.body.dueOn) {
+        updateQuery.dueOn = req.body.dueOn;
       }
       if (req.body.payAtUrl) {
         updateQuery.payAtUrl = req.body.payAtUrl;
+      }
+      if (req.body.firstDueDate) {
+        updateQuery.firstDueDate = req.body.firstDueDate;
       }
       let bill = await db.Bill.findByIdAndUpdate(req.params.id, updateQuery, { new: true });
       return res.status(200).json(bill);

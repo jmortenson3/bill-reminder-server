@@ -6,7 +6,9 @@ const billSchema = new Schema({
   paid: Boolean,
   amount: Number,
   payAtUrl: String,
-  dueDate: Date
+  dueEvery: String,
+  dueOn: String,
+  firstDueDate: String
 }, { collection: 'bills' });
 
 const Bill = mongoose.model('Bill', billSchema);
