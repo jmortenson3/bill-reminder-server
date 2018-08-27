@@ -69,7 +69,7 @@ exports.updateBill = async function(req, res, next) {
       if (req.body.amount) {
         updateQuery.amount = req.body.amount;
       }
-      if (req.body.paid) {
+      if (req.body.paid !== undefined) {
         updateQuery.paid = req.body.paid;
       }
       if (req.body.dueEvery) {
