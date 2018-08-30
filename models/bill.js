@@ -7,8 +7,8 @@ const billSchema = new Schema({
   amount: Number,
   payAtUrl: String,
   dueEvery: String,
-  dueOn: String,
-  firstDueDate: String
+  firstDueDate: String,
+  nextDueDate: String
 }, { collection: 'bills' });
 
 const Bill = mongoose.model('Bill', billSchema);

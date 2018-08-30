@@ -14,7 +14,6 @@ exports.createBill = async function(req, res, next) {
       amount: req.body.amount,
       payAtUrl: req.body.payAtUrl,
       dueEvery: req.body.dueEvery,
-      dueOn: req.body.dueOn,
       firstDueDate: req.body.firstDueDate
     });
     console.log(`Created game with id ${bill.id}.`);
@@ -74,9 +73,6 @@ exports.updateBill = async function(req, res, next) {
       }
       if (req.body.dueEvery) {
         updateQuery.dueEvery = req.body.dueEvery;
-      }
-      if (req.body.dueOn) {
-        updateQuery.dueOn = req.body.dueOn;
       }
       if (req.body.payAtUrl) {
         updateQuery.payAtUrl = req.body.payAtUrl;
