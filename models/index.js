@@ -17,3 +17,4 @@ mongoose.connect(uri, options)
   });
 
 module.exports.Bill = require('./bill');
+module.exports.User = require('./user');

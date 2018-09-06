@@ -8,7 +8,7 @@ exports.nextDueDate = async function() {
       { 'nextDueDate': { $exists: false } },
       { $and: [
         { 'nextDueDate': { $exists: true } },
-        { 'nextDueDate': { $lte: sysdate } }
+        { 'nextDueDate': { $lt: sysdate } }
       ]}
     ]
   };
@@ -20,11 +20,8 @@ exports.nextDueDate = async function() {
         return err;
       }
       let nextDueDate;
-      console.log("Title|FirstDueDate|DueEvery|NextDueDate");
       docs.forEach(async bill => {
-        console.log(`Checking ${bill.title}`);
         if (!bill.dueEvery) {
-          console.log(`${bill.title} | ${bill.firstDueDate} | ${bill.dueEvery} | ${nextDueDate}`);
           return;
         }
         if (moment(bill.firstDueDate) > moment()) {
@@ -73,8 +70,7 @@ exports.nextDueDate = async function() {
                     : moment(bill.firstDueDate).year(moment().year()).format('YYYY-MM-DD');
           }
         }
-        console.log(`${bill.title} | ${bill.firstDueDate} | ${bill.dueEvery} | ${nextDueDate}`);
-        const updateQuery = { nextDueDate: nextDueDate };
+        const updateQuery = { nextDueDate: nextDueDate, paid: false };
         let updatedBill = await db.Bill.findByIdAndUpdate(bill._id, updateQuery, { new: true });
       });
     });
