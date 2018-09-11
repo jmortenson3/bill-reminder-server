@@ -7,23 +7,21 @@ const billRoutes = require('./routes/bills');
 const authRoutes = require('./routes/auth');
 const schedule = require('node-schedule');
 const jobs = require('./jobs');
+const { handleError, unknownRoute } = require('./handlers/error');
 
 app.use(cors());
 app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded());
 
 app.use('/api/b', billRoutes);
 app.use('/api/auth', authRoutes);
 
-app.use(function(req, res, next) {
-  return res.status(404).json({
-    error: 'Unknown route.'
-  })
-});
+// this has to come after the routes above
+app.use(unknownRoute);
+app.use(handleError);
 
 const job = schedule.scheduleJob('* */5 * * * *', function() {
-  jobs.dates.nextDueDate();
+  //jobs.dates.nextDueDate();
 });
 
 app.listen(port, () => {

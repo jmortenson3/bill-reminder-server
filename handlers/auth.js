@@ -5,16 +5,8 @@ const config = require('../config');
 
 exports.getUserId = async function(req, res, next) {
   try {
-    const token = req.headers['x-access-token'];
-    if (!token) {
-      return res.status(400).json({
-        auth: false,
-        message: 'No token provided.'
-      });
-    }
-
-    const decoded = jwt.verify(token, config.secretKey);
-    return res.status(200).send(decoded);
+    const user = await db.User.findById(req.userId, { "password": 0 });
+    return res.status(200).json(user);
   } catch(err) {
     return res.status(500).json({
       auth: false,
@@ -22,7 +14,6 @@ exports.getUserId = async function(req, res, next) {
     });
   }
 }
-
 
 exports.register = async function(req, res, next) {
   if (!req.body.password) {
@@ -58,6 +49,47 @@ exports.register = async function(req, res, next) {
     return res.status(500).json({
       error: 'Error registering the user.',
       message: err.message
+    });
+  }
+}
+
+exports.login = async function(req, res, next) {
+  if (!req.body.email) {
+    return res.status(400).json({
+      error: 'Email can not be blank.'
+    });
+  }
+  if (!req.body.password) {
+    return res.status(400).json({
+      error: 'Password can not be blank.'
+    });
+  }
+  try {
+    const user = await db.User.findOne({ email: req.body.email });
+    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    if (!passwordIsValid) {
+      return res.status(400).json({
+        auth: false,
+        message: 'Invalid password.',
+        token: null
+      })
+    }
+
+    const token = jwt.sign(
+      { id: user._id },
+      config.secretKey,
+      { expiresIn: 86400 }
+    );
+    return res.status(200).json({
+      auth: true,
+      message: 'success',
+      token: token
+    });
+  } catch(err) {
+    return res.status(500).json({
+      auth: false,
+      message: 'Unable to log in.',
+      token: null
     });
   }
 }
