@@ -8,24 +8,33 @@ exports.getUserId = async function(req, res, next) {
     const user = await db.User.findById(req.userId, { "password": 0 });
     return res.status(200).json(user);
   } catch(err) {
-    return res.status(500).json({
-      auth: false,
-      message: 'Failed to authenticate user.'
-    });
+    next(err);
+    // return res.status(500).json({
+    //   auth: false,
+    //   message: 'Failed to authenticate user.'
+    // });
   }
 }
 
 exports.register = async function(req, res, next) {
   if (!req.body.password) {
-    return res.status(400).json({
-      error: 'Password can not be blank.'
-    })
+    let err = new Error();
+    err.message = 'Password can not be blank.';
+    err.statusCode = 400;
+    return next(err);
+    // return res.status(400).json({
+    //   error: 'Password can not be blank.'
+    // });
   }
 
   if (!req.body.email) {
-    return res.status(400).json({
-      error: 'Email can not be blank.'
-    });
+    let err = new Error();
+    err.message = 'Email can not be blank.';
+    err.statusCode = 400;
+    return next(err);
+    // return res.status(400).json({
+    //   error: 'Email can not be blank.'
+    // });
   }
 
   try {
@@ -46,23 +55,32 @@ exports.register = async function(req, res, next) {
     return res.status(200).json({ auth: true, token: token });
 
   } catch (err) {
-    return res.status(500).json({
-      error: 'Error registering the user.',
-      message: err.message
-    });
+    next(err);
+    // return res.status(500).json({
+    //   error: 'Error registering the user.',
+    //   message: err.message
+    // });
   }
 }
 
 exports.login = async function(req, res, next) {
   if (!req.body.email) {
-    return res.status(400).json({
-      error: 'Email can not be blank.'
-    });
+    let err = new Error();
+    err.message = 'Email can not be blank.';
+    err.statusCode = 400;
+    return next(err);
+    // return res.status(400).json({
+    //   error: 'Email can not be blank.'
+    // });
   }
   if (!req.body.password) {
-    return res.status(400).json({
-      error: 'Password can not be blank.'
-    });
+    let err = new Error();
+    err.message = 'Password can not be blank.';
+    err.statusCode = 400;
+    return next(err);
+    // return res.status(400).json({
+    //   error: 'Password can not be blank.'
+    // });
   }
   try {
     const user = await db.User.findOne({ email: req.body.email });
@@ -86,10 +104,12 @@ exports.login = async function(req, res, next) {
       token: token
     });
   } catch(err) {
-    return res.status(500).json({
-      auth: false,
-      message: 'Unable to log in.',
-      token: null
-    });
+    console.log('catching login error');
+    next(err);
+    // return res.status(500).json({
+    //   auth: false,
+    //   message: 'Unable to log in.',
+    //   token: null
+    // });
   }
 }

@@ -7,7 +7,7 @@ const billRoutes = require('./routes/bills');
 const authRoutes = require('./routes/auth');
 const schedule = require('node-schedule');
 const jobs = require('./jobs');
-const { handleError, unknownRoute } = require('./handlers/error');
+const { handleError, unknownRoute } = require('./middleware/error');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -16,9 +16,8 @@ app.use(bodyParser.urlencoded());
 app.use('/api/b', billRoutes);
 app.use('/api/auth', authRoutes);
 
-// this has to come after the routes above
-app.use(unknownRoute);
 app.use(handleError);
+app.use(unknownRoute);
 
 const job = schedule.scheduleJob('* */5 * * * *', function() {
   //jobs.dates.nextDueDate();

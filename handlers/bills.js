@@ -4,9 +4,13 @@ exports.createBill = async function(req, res, next) {
   console.log(req.body);
   try {
     if (!req.body.title) {
-      return res.status(400).json({
-        error: 'Could not create game without title.'
-      });
+      let err = new Error();
+      err.message = 'Could not create game without title.';
+      err.statusCode = 400;
+      return next(err);
+      // return res.status(400).json({
+      //   error: 'Could not create game without title.'
+      // });
     }
     let bill = await db.Bill.create({
       title: req.body.title,
@@ -19,9 +23,10 @@ exports.createBill = async function(req, res, next) {
     console.log(`Created game with id ${bill.id}.`);
     return res.status(200).json(bill);
   } catch (err) {
-    return res.status(400).json({
-      error: 'Could not create bill.'
-    })
+    next(err);
+    // return res.status(400).json({
+    //   error: 'Could not create bill.'
+    // });
   }
 };
 
@@ -32,15 +37,20 @@ exports.getBill = async function(req, res, next) {
       let bill = await db.Bill.findById(req.params.id);
       return res.status(200).json(bill);
     } else {
-      return res.status(400).json({
-        error: `Could not find bill with id ${req.params.id}`
-      });
+      let err = new Error();
+      err.message = `Could not find bill with id ${req.params.id}`;
+      err.statusCode = 400;
+      return next(err);
+      // return res.status(400).json({
+      //   error: `Could not find bill with id ${req.params.id}`
+      // });
     }
   } catch (err) {
     console.log('Could not find bill.');
-    return res.status(400).json({
-      error: 'Could not find bill.'
-    });
+    next(err);
+    // return res.status(400).json({
+    //   error: 'Could not find bill.'
+    // });
   }
 }
 
@@ -51,9 +61,10 @@ exports.getBills = async function(req, res, next) {
     return res.status(200).json(bills);
   } catch (err) {
     console.log('Could not find bills.');
-    return res.status(400).json({
-      error: 'Could not find bills'
-    })
+    next(err);
+    // return res.status(400).json({
+    //   error: 'Could not find bills'
+    // });
   }
 }
 
@@ -83,15 +94,20 @@ exports.updateBill = async function(req, res, next) {
       let bill = await db.Bill.findByIdAndUpdate(req.params.id, updateQuery, { new: true });
       return res.status(200).json(bill);
     } else {
-      return res.status(400).json({
-        error: `Could not update game with id ${req.params.id}`
-      });
+      let err = new Error();
+      err.message = `Could not update game with id ${req.params.id}`;
+      err.statusCode = 400;
+      return next(err);
+      // return res.status(400).json({
+      //   error: `Could not update game with id ${req.params.id}`
+      // });
     }
   } catch (err) {
     console.log(`ERROR: ${err.message}`);
-    return res.status(400).json({
-      error: 'Could not update game.'
-    });
+    next(err);
+    // return res.status(400).json({
+    //   error: 'Could not update game.'
+    // });
   }
 }
 
@@ -99,17 +115,22 @@ exports.deleteBill = async function(req, res, next) {
   console.log(`Getting bill with id ${req.params.id}`);
   try {
     if (!req.params.id) {
-      return res.status(400).json({
-        error: `Could not find game to delete with id ${req.params.id}`
-      })
+      let err = new Error();
+      err.message = `Could not find game to delete with id ${req.params.id}`;
+      err.statusCode = 400;
+      return next(err);
+      // return res.status(400).json({
+      //   error: `Could not find game to delete with id ${req.params.id}`
+      // });
     }
     let bill = await db.Bill.findById(req.params.id);
     await bill.remove();
     return res.status(200).json(bill);
   } catch (err) {
     console.log(`ERROR: ${err.message}`);
-    return res.status(400).json({
-      error: 'Could not delete game'
-    })
+    next(err);
+    // return res.status(400).json({
+    //   error: 'Could not delete game'
+    // });
   }
 }
