@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {
-  createBill,
-  getBill,
-  getBills,
-  updateBill,
-  deleteBill
-} = require('../handlers/bills');
+const { verifyToken } = require('../middleware/auth');
+const { createBill, getBill, getBills,
+        updateBill, deleteBill } = require('../handlers/bills');
+
+router.use(verifyToken);
 
 router.route('/')
   .get(getBills)

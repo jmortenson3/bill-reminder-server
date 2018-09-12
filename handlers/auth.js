@@ -86,11 +86,15 @@ exports.login = async function(req, res, next) {
     const user = await db.User.findOne({ email: req.body.email });
     const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
     if (!passwordIsValid) {
-      return res.status(400).json({
-        auth: false,
-        message: 'Invalid password.',
-        token: null
-      })
+      let err = new Error();
+      err.statusCode = 401;
+      err.message = 'Invalid credentials';
+      return next(err);
+      // return res.status(401).json({
+      //   auth: false,
+      //   message: 'Invalid password.',
+      //   token: null
+      // });
     }
 
     const token = jwt.sign(

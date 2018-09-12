@@ -21,7 +21,7 @@ exports.createBill = async function(req, res, next) {
       firstDueDate: req.body.firstDueDate
     });
     console.log(`Created game with id ${bill.id}.`);
-    return res.status(200).json(bill);
+    return res.status(201).json(bill);
   } catch (err) {
     next(err);
     // return res.status(400).json({
@@ -92,7 +92,7 @@ exports.updateBill = async function(req, res, next) {
         updateQuery.firstDueDate = req.body.firstDueDate;
       }
       let bill = await db.Bill.findByIdAndUpdate(req.params.id, updateQuery, { new: true });
-      return res.status(200).json(bill);
+      return res.status(201).json(bill);
     } else {
       let err = new Error();
       err.message = `Could not update game with id ${req.params.id}`;
@@ -125,7 +125,7 @@ exports.deleteBill = async function(req, res, next) {
     }
     let bill = await db.Bill.findById(req.params.id);
     await bill.remove();
-    return res.status(200).json(bill);
+    return res.status(201).json(bill);
   } catch (err) {
     console.log(`ERROR: ${err.message}`);
     next(err);
