@@ -9,10 +9,6 @@ exports.getUserId = async function(req, res, next) {
     return res.status(200).json(user);
   } catch(err) {
     next(err);
-    // return res.status(500).json({
-    //   auth: false,
-    //   message: 'Failed to authenticate user.'
-    // });
   }
 }
 
@@ -22,21 +18,13 @@ exports.register = async function(req, res, next) {
     err.message = 'Password can not be blank.';
     err.statusCode = 400;
     return next(err);
-    // return res.status(400).json({
-    //   error: 'Password can not be blank.'
-    // });
   }
-
   if (!req.body.email) {
     let err = new Error();
     err.message = 'Email can not be blank.';
     err.statusCode = 400;
     return next(err);
-    // return res.status(400).json({
-    //   error: 'Email can not be blank.'
-    // });
   }
-
   try {
     const hashedPassword = bcrypt.hashSync(req.body.password, 8);
     let user = await db.User.create({
@@ -45,21 +33,14 @@ exports.register = async function(req, res, next) {
       lastName: req.body.lastName,
       password: hashedPassword
     });
-
     const token = jwt.sign(
       { id: user._id },
       config.secretKey,
       { expiresIn: 86400 }  // 24 hours
     );
-
     return res.status(200).json({ auth: true, token: token });
-
   } catch (err) {
     next(err);
-    // return res.status(500).json({
-    //   error: 'Error registering the user.',
-    //   message: err.message
-    // });
   }
 }
 
@@ -69,18 +50,12 @@ exports.login = async function(req, res, next) {
     err.message = 'Email can not be blank.';
     err.statusCode = 400;
     return next(err);
-    // return res.status(400).json({
-    //   error: 'Email can not be blank.'
-    // });
   }
   if (!req.body.password) {
     let err = new Error();
     err.message = 'Password can not be blank.';
     err.statusCode = 400;
     return next(err);
-    // return res.status(400).json({
-    //   error: 'Password can not be blank.'
-    // });
   }
   try {
     const user = await db.User.findOne({ email: req.body.email });
@@ -90,13 +65,7 @@ exports.login = async function(req, res, next) {
       err.statusCode = 401;
       err.message = 'Invalid credentials';
       return next(err);
-      // return res.status(401).json({
-      //   auth: false,
-      //   message: 'Invalid password.',
-      //   token: null
-      // });
     }
-
     const token = jwt.sign(
       { id: user._id },
       config.secretKey,
@@ -110,10 +79,5 @@ exports.login = async function(req, res, next) {
   } catch(err) {
     console.log('catching login error');
     next(err);
-    // return res.status(500).json({
-    //   auth: false,
-    //   message: 'Unable to log in.',
-    //   token: null
-    // });
   }
 }

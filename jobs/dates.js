@@ -24,6 +24,7 @@ exports.nextDueDate = async function() {
         if (!bill.dueEvery) {
           return;
         }
+        console.log(`${bill.nextDueDate} was less than ${sysdate}`);
         if (moment(bill.firstDueDate) > moment()) {
           nextDueDate = bill.firstDueDate;
         } else {

@@ -9,19 +9,11 @@ exports.verifyToken = function(req, res, next) {
     err.statusCode = 401;
     err.message = 'Invalid token';
     return next(err);
-    // return res.status(400).json({
-    //   auth: false,
-    //   message: 'Failed to authenticate.'
-    // });
   }
 
   jwt.verify(token, config.secretKey, function(err, decoded) {
     if (err) {
       return next(err);
-      // return res.status(500).json({
-      //   auth: false,
-      //   message: 'Failed to authenticate.'
-      // });
     }
     req.userId = decoded.id;
     next();
