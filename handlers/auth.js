@@ -19,16 +19,16 @@ exports.register = async function(req, res, next) {
     err.statusCode = 400;
     return next(err);
   }
-  if (!req.body.email) {
+  if (!req.body.username) {
     let err = new Error();
-    err.message = 'Email can not be blank.';
+    err.message = 'Username can not be blank.';
     err.statusCode = 400;
     return next(err);
   }
   try {
     const hashedPassword = bcrypt.hashSync(req.body.password, 8);
     let user = await db.User.create({
-      email: req.body.email,
+      username: req.body.username,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       password: hashedPassword
@@ -45,7 +45,7 @@ exports.register = async function(req, res, next) {
 }
 
 exports.login = async function(req, res, next) {
-  if (!req.body.email) {
+  if (!req.body.username) {
     let err = new Error();
     err.message = 'Email can not be blank.';
     err.statusCode = 400;
@@ -58,7 +58,7 @@ exports.login = async function(req, res, next) {
     return next(err);
   }
   try {
-    const user = await db.User.findOne({ email: req.body.email });
+    const user = await db.User.findOne({ username: req.body.username });
     const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
     if (!passwordIsValid) {
       let err = new Error();

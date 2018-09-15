@@ -4,7 +4,13 @@ exports.createBill = async function(req, res, next) {
   try {
     if (!req.body.title) {
       let err = new Error();
-      err.message = 'Could not create game without title.';
+      err.message = 'Could not create bill: no title.';
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!req.body.userId) {
+      let err = new Error();
+      err.message = 'Could not create bill: unknown user.';
       err.statusCode = 400;
       return next(err);
     }
@@ -38,6 +44,12 @@ exports.getBill = async function(req, res, next) {
 
 exports.getBills = async function(req, res, next) {
   try {
+    if (!req.body.userId) {
+      let err = new Error();
+      err.message = 'Could not get bills: unknown user.';
+      err.statusCode = 400;
+      return next(err);
+    }
     let bills = await db.Bill.find();
     return res.status(200).json(bills);
   } catch (err) {
@@ -49,7 +61,7 @@ exports.updateBill = async function(req, res, next) {
   try {
     if (req.params.id) {
       const { title, paid, amount, payAtUrl,
-              dueEvery, firstDueDate } = req.body;
+              dueEvery, firstDueDate, userId } = req.body;
       const updateQuery = {};
       if (title) {
         updateQuery.title = title;
