@@ -13,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
-app.use('/api/b', billRoutes);
+app.use('/api/users', billRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use(handleError);

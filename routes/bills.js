@@ -6,11 +6,11 @@ const { createBill, getBill, getBills,
 
 router.use(verifyToken);
 
-router.route('/')
-  .get(getBills)
-  .post(createBill);
+router.route('/:username/bills')
+  .post(createBill)
+  .get(getBills);
 
-router.route('/:id')
+router.route('/:username/bills/:id')
   .get(getBill)
   .delete(deleteBill)
   .put(updateBill);

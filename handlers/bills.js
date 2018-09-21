@@ -8,17 +8,18 @@ exports.createBill = async function(req, res, next) {
       err.statusCode = 400;
       return next(err);
     }
-    if (!req.body.userId) {
+    if (!req.params.username) {
       let err = new Error();
       err.message = 'Could not create bill: unknown user.';
       err.statusCode = 400;
       return next(err);
     }
+    const username = req.params.username;
     const { title, paid, amount, payAtUrl,
             dueEvery, firstDueDate } = req.body;
     let bill = await db.Bill.create({
       title, paid, amount, payAtUrl,
-      dueEvery, firstDueDate
+      dueEvery, firstDueDate, username
     });
     return res.status(201).json(bill);
   } catch (err) {
@@ -28,12 +29,19 @@ exports.createBill = async function(req, res, next) {
 
 exports.getBill = async function(req, res, next) {
   try {
-    if (req.params.id) {
-      let bill = await db.Bill.findById(req.params.id);
+    if (req.params.id && req.params.username) {
+      const { username, id } = req.params;
+      const criteria = {
+        $and: [
+          { '_id': id },
+          { 'username': username }
+        ]
+      }
+      let bill = await db.Bill.find(criteria);
       return res.status(200).json(bill);
     } else {
       let err = new Error();
-      err.message = `Could not find bill with id ${req.params.id}`;
+      err.message = `Could not find bill with id ${id}`;
       err.statusCode = 400;
       return next(err);
     }
@@ -44,13 +52,16 @@ exports.getBill = async function(req, res, next) {
 
 exports.getBills = async function(req, res, next) {
   try {
-    if (!req.body.userId) {
+    if (!req.params.username) {
       let err = new Error();
       err.message = 'Could not get bills: unknown user.';
       err.statusCode = 400;
       return next(err);
     }
-    let bills = await db.Bill.find();
+    const criteria = {
+      'username': req.params.username
+    }
+    let bills = await db.Bill.find(criteria);
     return res.status(200).json(bills);
   } catch (err) {
     next(err);
@@ -59,9 +70,16 @@ exports.getBills = async function(req, res, next) {
 
 exports.updateBill = async function(req, res, next) {
   try {
-    if (req.params.id) {
+    if (req.params.id && req.params.username) {
       const { title, paid, amount, payAtUrl,
-              dueEvery, firstDueDate, userId } = req.body;
+              dueEvery, firstDueDate } = req.body;
+      const { username, id } = req.params;
+      const criteria = {
+        $and: [
+          { '_id': id },
+          { 'username': username }
+        ]
+      }
       const updateQuery = {};
       if (title) {
         updateQuery.title = title;
@@ -81,11 +99,11 @@ exports.updateBill = async function(req, res, next) {
       if (firstDueDate) {
         updateQuery.firstDueDate = firstDueDate;
       }
-      let bill = await db.Bill.findByIdAndUpdate(req.params.id, updateQuery, { new: true });
+      let bill = await db.Bill.findOneAndUpdate(criteria, updateQuery, { new: true });
       return res.status(201).json(bill);
     } else {
       let err = new Error();
-      err.message = `Could not update game with id ${req.params.id}`;
+      err.message = `Could not update bill with id ${id}`;
       err.statusCode = 400;
       return next(err);
     }
@@ -96,15 +114,22 @@ exports.updateBill = async function(req, res, next) {
 
 exports.deleteBill = async function(req, res, next) {
   try {
-    if (!req.params.id) {
-      let err = new Error();
-      err.message = `Could not find game to delete with id ${req.params.id}`;
-      err.statusCode = 400;
-      return next(err);
+    if (req.params.id && req.params.username) {
+      const { username, id } = req.params;
+      const criteria = {
+        $and: [
+          { '_id': id },
+          { 'username': username }
+        ]
+      }
+      let bill = await db.Bill.findOne(criteria);
+      await bill.remove();
+      return res.status(201).json(bill);
     }
-    let bill = await db.Bill.findById(req.params.id);
-    await bill.remove();
-    return res.status(201).json(bill);
+    let err = new Error();
+    err.message = `Could not find game to delete with id ${id}`;
+    err.statusCode = 400;
+    return next(err);
   } catch (err) {
     next(err);
   }

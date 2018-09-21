@@ -59,6 +59,7 @@ exports.login = async function(req, res, next) {
   }
   try {
     const user = await db.User.findOne({ username: req.body.username });
+    console.log(user);
     const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
     if (!passwordIsValid) {
       let err = new Error();
