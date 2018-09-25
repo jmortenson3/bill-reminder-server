@@ -10,7 +10,6 @@ exports.verifyToken = function(req, res, next) {
     err.message = 'Invalid token';
     return next(err);
   }
-
   jwt.verify(token, config.secretKey, function(err, decoded) {
     if (err) {
       return next(err);

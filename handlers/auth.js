@@ -26,11 +26,19 @@ exports.register = async function(req, res, next) {
     return next(err);
   }
   try {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 8);
+    let { username, password, firstName } = req.body;
+    username = username.toLowerCase();
+    const existingUser = await db.User.findOne({"username": username});
+    if (existingUser) {
+      let err = new Error();
+      err.message = 'User already exists';
+      err.statusCode = 400;
+      return next(err);
+    }
+    const hashedPassword = bcrypt.hashSync(password, 8);
     let user = await db.User.create({
-      username: req.body.username,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      username: username,
+      firstName: firstName,
       password: hashedPassword
     });
     const token = jwt.sign(
@@ -58,9 +66,10 @@ exports.login = async function(req, res, next) {
     return next(err);
   }
   try {
-    const user = await db.User.findOne({ username: req.body.username });
-    console.log(user);
-    const passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    let { username, password } = req.body;
+    username = username.toLowerCase();
+    const user = await db.User.findOne({ username: username });
+    const passwordIsValid = bcrypt.compareSync(password, user.password);
     if (!passwordIsValid) {
       let err = new Error();
       err.statusCode = 401;
