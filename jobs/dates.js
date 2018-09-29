@@ -2,6 +2,7 @@ const db = require('../models');
 const moment = require('moment');
 
 exports.nextDueDate = async function() {
+  console.log(`Starting date job at ${moment()}`);
   const sysdate = moment().format('YYYY-MM-DD');
   const criteria = {
     $or: [
@@ -24,7 +25,6 @@ exports.nextDueDate = async function() {
         if (!bill.dueEvery) {
           return;
         }
-        console.log(`${bill.nextDueDate} was less than ${sysdate}`);
         if (moment(bill.firstDueDate) > moment()) {
           nextDueDate = bill.firstDueDate;
         } else {
