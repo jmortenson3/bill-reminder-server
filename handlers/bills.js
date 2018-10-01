@@ -72,7 +72,7 @@ exports.updateBill = async function(req, res, next) {
   try {
     if (req.params.id && req.params.username) {
       const { title, paid, amount, payAtUrl,
-              dueEvery, firstDueDate } = req.body;
+              dueEvery, firstDueDate, doDelete } = req.body;
       const { username, id } = req.params;
       const criteria = {
         $and: [
@@ -89,6 +89,9 @@ exports.updateBill = async function(req, res, next) {
       }
       if (paid !== undefined) {
         updateQuery.paid = paid;
+      }
+      if (doDelete !== undefined) {
+        updateQuery.doDelete = doDelete;
       }
       if (dueEvery) {
         updateQuery.dueEvery = dueEvery;
@@ -107,30 +110,6 @@ exports.updateBill = async function(req, res, next) {
       err.statusCode = 400;
       return next(err);
     }
-  } catch (err) {
-    next(err);
-  }
-}
-
-exports.deleteBill = async function(req, res, next) {
-  try {
-    if (req.params.id && req.params.username) {
-      const { username, id } = req.params;
-      const { doDelete } = req.body;
-      const updateQuery = { doDelete };
-      const criteria = {
-        $and: [
-          { '_id': id },
-          { 'username': username }
-        ]
-      }
-      let bill = await db.Bill.findOneAndUpdate(criteria, updateQuery, { new: true });
-      return res.status(201).json(bill);
-    }
-    let err = new Error();
-    err.message = `Could not find game to delete with id ${id}`;
-    err.statusCode = 400;
-    return next(err);
   } catch (err) {
     next(err);
   }
