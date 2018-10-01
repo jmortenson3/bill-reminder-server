@@ -116,14 +116,15 @@ exports.deleteBill = async function(req, res, next) {
   try {
     if (req.params.id && req.params.username) {
       const { username, id } = req.params;
+      const { doDelete } = req.body;
+      const updateQuery = { doDelete };
       const criteria = {
         $and: [
           { '_id': id },
           { 'username': username }
         ]
       }
-      let bill = await db.Bill.findOne(criteria);
-      await bill.remove();
+      let bill = await db.Bill.findOneAndUpdate(criteria, updateQuery, { new: true });
       return res.status(201).json(bill);
     }
     let err = new Error();

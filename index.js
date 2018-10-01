@@ -19,10 +19,12 @@ app.use('/api/auth', authRoutes);
 app.use(handleError);
 app.use(unknownRoute);
 
-const job = schedule.scheduleJob('*/5 * * * *', function() {
-  console.log(new Date());
-  console.log(`Starting date job...`);
+const dueDateJob = schedule.scheduleJob('*/5 * * * *', function() {
   jobs.dates.nextDueDate();
+});
+
+const deleteBillsJob = schedule.scheduleJob('0 0 * * *', function() {
+  jobs.bills.deleteBills();
 });
 
 app.listen(port, () => {

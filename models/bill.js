@@ -9,7 +9,8 @@ const billSchema = new Schema({
   dueEvery: String,
   firstDueDate: String,
   nextDueDate: String,
-  username: String
+  username: String,
+  doDelete: Boolean
 }, { collection: 'bills' });
 
 const Bill = mongoose.model('Bill', billSchema);
