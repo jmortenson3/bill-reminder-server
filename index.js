@@ -19,9 +19,9 @@ app.use('/api/auth', authRoutes);
 app.use(handleError);
 app.use(unknownRoute);
 
-// jobs.email.notifyDailyBills();
-// jobs.email.notifyWeeklyBills();
 const job = schedule.scheduleJob('*/5 * * * *', function() {
+  console.log(new Date());
+  console.log(`Starting date job...`);
   jobs.dates.nextDueDate();
 });
 
