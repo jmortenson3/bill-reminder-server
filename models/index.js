@@ -1,7 +1,7 @@
 const CONFIG = require('../config');
 const mongoose = require('mongoose');
 
-const uri = `mongodb://${CONFIG.user}:${CONFIG.pass}@localhost:27001/bills`;
+const uri = `mongodb://${CONFIG.user}:${CONFIG.pass}@localhost:27017/bills`;
 const options = {
   keepAlive: true,
   useNewUrlParser: true

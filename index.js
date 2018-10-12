@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const https = require('https');
+const fs = require('fs');
+const CONFIG = require('./config');
 const bodyParser = require('body-parser');
 const port = process.env.PORT || 3001;
 const billRoutes = require('./routes/bills');
@@ -27,6 +30,9 @@ const deleteBillsJob = schedule.scheduleJob('0 0 * * *', function() {
   jobs.bills.deleteBills();
 });
 
-app.listen(port, () => {
+https.createServer({
+  key: fs.readFileSync(CONFIG.keyFile),
+  cert: fs.readFileSync(CONFIG.certFile)
+}, app).listen(port, () => {
   console.log(`Node server running on port ${port}.`);
 });
